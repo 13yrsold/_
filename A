@@ -1,0 +1,66 @@
+getgenv().Players = game:GetService('Players')
+getgenv().Client = Players.LocalPlayer
+getgenv().UserInputService = game:GetService('UserInputService')
+getgenv().RunService = game:GetService('RunService')
+
+-- | Booleans | --
+
+local Aimlock = false;
+
+-- | Nils | --
+
+local AimlockTarget;
+
+-- | Hotkeys | --
+
+local AimlockToggle = 'R'
+local AimlockVelocityUp = 'L'
+local AimlockVelocityDown = 'K'
+
+-- | Method | --
+
+local AimlockVelocity = 0.17
+local AimlockSetting = 'Prediction'
+
+-- | Gui | --
+
+local MainFrame = Instance.new('ScreenGui')
+MainFrame.Parent = Client:WaitForChild('PlayerGui')
+MainFrame.Enum.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+MainFrame.ResetOnDeath = false
+
+local Text = Instance.new('TextLabel')
+Text.Name = 'Display'
+Text.Parent = MainFrame
+Text.BackgroundTransparency = 1
+Text.Size = UDim2.new(0.75, 0, 0.75, 0)
+Text.Position = Vector3.new(0, 132, 0, 50)
+Text.Font = Enum.Font.Code
+Text.TextColor3 = Color3.fromRGB(255,0,0)
+Text.Text = 'Aimlocked Player: '..tostring(AimlockTarget.DisplayName)
+Text.TextSize = 13
+
+-- | Function | --
+
+UserInputService.InputBegan:connect(function(Action, NoChat)
+    if NoChat then
+        return nil
+    end
+    if Action.KeyCode == Enum.KeyCode[AimlockToggle] then
+        Aimlock = not Aimlock
+    end
+    if Action.KeyCode == Enum.KeyCode[AimlockVelocityUp] then
+        AimlockVelocity + 0.1
+    end
+    if Action.KeyCode == Enum.KeyCode[AimlockVelocityDown] then
+        AimlockVelocity - 0.1
+    end
+end)
+
+RunService.RenderStepped:Connect(function()
+    if Aimlock then
+        Client.Character:FindFirstChildOfClass'Tool'.Shoot:FireServer(AimlockTarget.Character:FindFirstChild'HumanoidRootPart'.CFrame + AimlockTarget.Character:FindFirstChild'HumanoidRootPart'.Velocity / AimlockVelocity)
+    end
+end)
+
+
