@@ -2,6 +2,7 @@ getgenv().Players = game:GetService('Players')
 getgenv().Client = Players.LocalPlayer
 getgenv().UserInputService = game:GetService('UserInputService')
 getgenv().RunService = game:GetService('RunService')
+getgenv().Mouse = Client:GetMouse()
 
 -- | Booleans | --
 
@@ -10,17 +11,30 @@ local Aimlock = false;
 -- | Nils | --
 
 local AimlockTarget;
+local AimlockPart;
 
 -- | Hotkeys | --
 
 local AimlockToggle = 'R'
 local AimlockVelocityUp = 'L'
 local AimlockVelocityDown = 'K'
+local AimlockHeadKey = 'I'
+local AimlockTorsoKey = 'O'
+local AimlockHumanoidRootPartKey = 'P'
+local LockOnPlayer = 'E'
 
 -- | Method | --
 
 local AimlockVelocity = 0.17
 local AimlockSetting = 'Prediction'
+
+-- | Tables | --
+
+local AbledParts = {
+    ['Head'] = 'Head';
+    ['Torso'] = 'Torso';
+    ['HumanoidRootPart'] = 'HumanoidRootPart';
+}
 
 -- | Gui | --
 
@@ -55,10 +69,19 @@ UserInputService.InputBegan:connect(function(Action, NoChat)
     if Action.KeyCode == Enum.KeyCode[AimlockVelocityDown] then
         AimlockVelocity - 0.1
     end
+    if Action.KeyCode == Enum.KeyCode[AimlockHeadKey] then
+        AimlockPart = AbledParts['Head']
+    end
+    if Action.KeyCode == Enum.KeyCode[AimlockTorsoKey] then
+        AimlockPart = AbledParts['Torso']
+    end
+    if Action.KeyCode == Enum.KeyCode[AimlockHumanoidRootPartKey] then
+        AimlockPart = AbledParts['HumanoidRootPart']
+    end
 end)
 
 RunService.RenderStepped:Connect(function()
-    if Aimlock then
+    if Aimlock and AimlockTarget and AimlockTarget.Character and AimlockTarget.Character:FindFirstChild(AimlockPart) then
         Client.Character:FindFirstChildOfClass'Tool'.Shoot:FireServer(AimlockTarget.Character:FindFirstChild'HumanoidRootPart'.CFrame + AimlockTarget.Character:FindFirstChild'HumanoidRootPart'.Velocity / AimlockVelocity)
     end
 end)
