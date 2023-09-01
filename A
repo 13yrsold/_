@@ -1,8 +1,11 @@
-getgenv().Players = game:GetService('Players')
+getgenv().Players = game:GetService'Players'
 getgenv().Client = Players.LocalPlayer
-getgenv().UserInputService = game:GetService('UserInputService')
-getgenv().RunService = game:GetService('RunService')
+getgenv().UserInputService = game:GetService'UserInputService'
+getgenv().RunService = game:GetService'RunService'
 getgenv().Mouse = Client:GetMouse()
+getgenv().UserNotifications = function(title, text, time) game.StarterGui:SetCore("SendNotification", {Title = title; Text = text; Duration = time;}) end
+getgenv().CoreGui = game:GetService'CoreGui'
+getgenv().ScriptColour = Color3.fromRGB(170,0,255)
 
 -- | Booleans | --
 
@@ -50,11 +53,26 @@ Text.BackgroundTransparency = 1
 Text.Size = UDim2.new(0.75, 0, 0.75, 0)
 Text.Position = Vector3.new(0, 132, 0, 50)
 Text.Font = Enum.Font.Code
-Text.TextColor3 = Color3.fromRGB(255,0,0)
+Text.TextColor3 = ScriptColour
 Text.Text = 'Aimlocked Player: '..tostring(AimlockTarget.DisplayName)
 Text.TextSize = 13
 
 -- | Function | --
+
+local function API()
+    if Drawing == nil then
+        UserNotifications('Erorr', 'Your executor is not compatible for FovCircle')
+    else
+        return nil
+    end
+end
+
+for i, v in pairs(CoreGui.RobloxGui.NotificationFrame:GetDescendants()) do -- Watch how many skids take this XD
+    if v:Name == "Notification" then
+            v.NotificationTitle.TextColor3 = ScriptColour
+        v.NotificationText.TextColor3 = ScriptColour
+    end
+end
 
 UserInputService.InputBegan:connect(function(Action, NoChat)
     if NoChat then
@@ -62,21 +80,27 @@ UserInputService.InputBegan:connect(function(Action, NoChat)
     end
     if Action.KeyCode == Enum.KeyCode[AimlockToggle] then
         Aimlock = not Aimlock
+        UserNotifications('Coryu Aimlock', 'Aimlock is now '..tostring(Aimlock),5)
     end
     if Action.KeyCode == Enum.KeyCode[AimlockVelocityUp] then
         AimlockVelocity + 0.1
+        UserNotifications('Coryu Aimlock', 'Aimlock Velocity is now '..tonumber(AimlockVelocity),5)
     end
     if Action.KeyCode == Enum.KeyCode[AimlockVelocityDown] then
         AimlockVelocity - 0.1
+        UserNotifications('Coryu Aimlock', 'Aimlock Velocity is now '..tonumber(AimlockVelocity),5)
     end
     if Action.KeyCode == Enum.KeyCode[AimlockHeadKey] then
         AimlockPart = AbledParts['Head']
+        UserNotifications('Coryu Aimlock', 'Aimlock Part is now Head',5)
     end
     if Action.KeyCode == Enum.KeyCode[AimlockTorsoKey] then
         AimlockPart = AbledParts['Torso']
+        UserNotifications('Coryu Aimlock', 'Aimlock Part is now Torso',5)
     end
     if Action.KeyCode == Enum.KeyCode[AimlockHumanoidRootPartKey] then
         AimlockPart = AbledParts['HumanoidRootPart']
+        UserNotifications('Coryu Aimlock', 'Aimlock Part is now HumanoidRootPart',5)
     end
 end)
 
@@ -85,5 +109,3 @@ RunService.RenderStepped:Connect(function()
         Client.Character:FindFirstChildOfClass'Tool'.Shoot:FireServer(AimlockTarget.Character:FindFirstChild'HumanoidRootPart'.CFrame + AimlockTarget.Character:FindFirstChild'HumanoidRootPart'.Velocity / AimlockVelocity)
     end
 end)
-
-
